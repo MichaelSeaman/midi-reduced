@@ -13,6 +13,9 @@ class NoteEvent:
         self.velocity = velocity
         self.rowNumber = rowNumber
 
+    def __lt__(self, other):
+        return (self.tick < other.tick)
+
 class Note:
     noteLetters  = ["C","C","D","D","E","F","F","G","G","A","A","B"]
     sharps       = [ "","#", "","#", "", "","#", "","#", "","#", ""]

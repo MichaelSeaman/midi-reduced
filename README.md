@@ -9,4 +9,4 @@ Notes are seperated by new lines, and each line takes the form
 ```
 <time since last note>,<note number>,<duration>
 ```
-All time is measured in a resolution of tenths of milliseconds (aka 10^-4 s)
+All time is measured in a resolution of milliseconds

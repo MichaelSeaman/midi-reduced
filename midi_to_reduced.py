@@ -4,11 +4,12 @@ import sys
 import os
 import getopt
 import subprocess
+import csv
 from csv_processing import csv_to_notelist
 
 MIDI_INPUT_FILE = "testfiles/Test_midi_waldstein.mid"
 INPUT_FILE_PROVIDED = False
-RESOLUTION = 1e-4
+RESOLUTION = 1e-3
 
 def main(argv):
     global MIDI_INPUT_FILE
@@ -36,16 +37,24 @@ def main(argv):
 
     # run midi to csv
     midiInputFileName, _ = os.path.splitext(os.path.basename(MIDI_INPUT_FILE))
-    csvFileName = os.path.join( os.getcwd(), midiInputFileName + ".csv")
+    csvFileName = midiInputFileName + ".csv"
 
     print("Creating midicsv file at ", csvFileName)
     os.system("midicsv {} {}".format(MIDI_INPUT_FILE, csvFileName))
 
-    sys.exit(0)
     # prepping midicsv data for processing
-    rows = open(csvFileName, encoding="latin-1").read().splitlines()
-    notelist = csv_to_notelist(rows)
-    print(notelist)
+    with open(csvFileName, 'r', encoding="latin-1") as f:
+        readCSV = csv.reader(f)
+        rows = list(readCSV)
+    os.remove(csvFileName)
+
+    notelist = csv_to_notelist(rows, resolution=RESOLUTION)
+
+    reducedFileName = midiInputFileName + "_reduced.csv"
+    print("Creating reduced file at ", reducedFileName)
+    with open(reducedFileName, 'w') as f:
+        writeCSV = csv.writer(f)
+        writeCSV.writerows(notelist)
 
     print("All done.")
 

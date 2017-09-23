@@ -7,18 +7,18 @@
 import sys
 from midi import *
 
-def csv_to_notelist(rows):
+def csv_to_notelist(rows, resolution):
     tempoMap   = TempoMap()
     notes      = []
     noteEvents = []
     onTicks    = []
+    resolution_multiplier = 1e-3 / resolution
 
     # Reading midi events
-    for i, row in enumerate(rows):
-        cells = row.split(", ")
+    for i, cells in enumerate(rows):
         track = int(cells[0])
         tick = int(cells[1])
-        rowType = cells[2]
+        rowType = cells[2].strip()
         if rowType == "Header":
             tpqn = int(cells[5]) # set tickcells per quarter note
             tempoMap.tpqn = tpqn
@@ -52,8 +52,8 @@ def csv_to_notelist(rows):
 
     # creating notelist
     for note in notes:
-        notelist.append([int(note.onTimeMillis(tempoMap) * 10), note.pitch,
-        int(note.onTimeMillis(tempoMap) * 10)])
+        notelist.append([int(note.onTimeMillis(tempoMap) * resolution_multiplier + .5),
+        note.pitch, int(note.durationMillis(tempoMap) * resolution_multiplier + .5)])
 
     # changing first entry to only record delta t
     last_note_on = 0
@@ -64,3 +64,23 @@ def csv_to_notelist(rows):
         last_note_on = temp
 
     return notelist
+
+def csv_to_note_event_list(rows, resolution):
+    resolution_multiplier = resolution * 1000
+    event_list = []
+
+    last_note_on = 0
+    for i, cells in enumerate(rows):
+        note_on_relative = int(cells[0]) * resolution_multiplier
+        note_on = last_note_on + note_on_relative
+        last_note_on = note_on
+        pitch = int(cells[1])
+        duration = int(cells[2])
+
+        noteEvent_on = NoteEvent(track=2, tick=note_on, pitch=pitch, velocity=100)
+        noteEvent_off = NoteEvent(track=2, tick=note_on+duration, pitch=pitch,
+            velocity=0)
+        event_list.append(noteEvent_on)
+        event_list.append(noteEvent_off)
+
+    return sorted(event_list)
