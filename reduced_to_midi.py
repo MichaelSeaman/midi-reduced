@@ -3,7 +3,7 @@ import os
 import getopt
 import subprocess
 import csv
-from csv_processing import csv_to_note_event_list
+from csv_processing import csv_to_note_event_list, preprocesses_raw_unicode_notes
 from midi import *
 
 REDUCED_INPUT_FILE = "testfiles/Test_midi_waldstein_reduced.txt"

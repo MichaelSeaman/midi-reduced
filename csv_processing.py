@@ -63,12 +63,12 @@ def csv_to_notelist(rows, resolution):
         note[0] = curr_note_on - last_note_on
         last_note_on = temp
 
-    charlist = []
+    strlist = []
     for note in notelist:
-        for cell in note:
-            charlist.append(chr(cell + 32))
+        strlist.append("".join([
+            chr( min(cell, 63583) + 160) for cell in note]))
 
-    notestring = "".join(charlist)
+    notestring = ",".join(strlist)
     return notestring
 
 def csv_to_note_event_list(rows, resolution):
@@ -92,8 +92,14 @@ def csv_to_note_event_list(rows, resolution):
     return sorted(event_list)
 
 def preprocesses_raw_unicode_notes(raw):
-    note_list_uni = [raw[i:i+3] for i in range(0, len(raw), 3)]
+    note_list_uni = raw.split(",")
+    print(note_list_uni)
     out = []
     for note in note_list_uni:
-        out.append([ord(cell) - 32 for cell in note ])
+        row = [ord(cell) - 160 for cell in note ]
+        if(len(row) != 3):
+            row = row + [0,0,0]
+            row = row[:3]
+        out.append(row)
+
     return out
