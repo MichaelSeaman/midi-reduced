@@ -53,7 +53,7 @@ def csv_to_notelist(rows, resolution):
     # creating notelist
     for note in notes:
         notelist.append([int(note.onTimeMillis(tempoMap) * resolution_multiplier + .5),
-        note.pitch, int(note.durationMillis(tempoMap) * resolution_multiplier + .5)])
+        int(note.pitch), int(note.durationMillis(tempoMap) * resolution_multiplier + .5)])
 
     # changing first entry to only record delta t
     last_note_on = 0
@@ -63,7 +63,13 @@ def csv_to_notelist(rows, resolution):
         note[0] = curr_note_on - last_note_on
         last_note_on = temp
 
-    return notelist
+    charlist = []
+    for note in notelist:
+        for cell in note:
+            charlist.append(chr(cell + 32))
+
+    notestring = "".join(charlist)
+    return notestring
 
 def csv_to_note_event_list(rows, resolution):
     resolution_multiplier = resolution * 1000
@@ -84,3 +90,10 @@ def csv_to_note_event_list(rows, resolution):
         event_list.append(noteEvent_off)
 
     return sorted(event_list)
+
+def preprocesses_raw_unicode_notes(raw):
+    note_list_uni = [raw[i:i+3] for i in range(0, len(raw), 3)]
+    out = []
+    for note in note_list_uni:
+        out.append([ord(cell) - 32 for cell in note ])
+    return out

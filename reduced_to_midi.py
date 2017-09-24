@@ -6,7 +6,7 @@ import csv
 from csv_processing import csv_to_note_event_list
 from midi import *
 
-REDUCED_INPUT_FILE = "testfiles/Test_midi_waldstein_reduced.csv"
+REDUCED_INPUT_FILE = "testfiles/Test_midi_waldstein_reduced.txt"
 INPUT_FILE_PROVIDED = False
 RESOLUTION = 1e-3
 MIDI_HEADER_TEMPLATE_FILE = "midi_header.csv"
@@ -37,10 +37,10 @@ def main(argv):
         sys.exit(0)
 
     # Read CSV
-    with open(REDUCED_INPUT_FILE, 'r', encoding="latin-1") as f:
-        readCSV = csv.reader(f)
-        rows = list(readCSV)
+    with open(REDUCED_INPUT_FILE, 'r', encoding="utf-8") as f:
+        raw = f.read()
 
+    rows = preprocesses_raw_unicode_notes(raw)
     # Re-order notelist to list of note events
     note_event_list = csv_to_note_event_list(rows, RESOLUTION)
 

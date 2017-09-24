@@ -48,13 +48,13 @@ def main(argv):
         rows = list(readCSV)
     os.remove(csvFileName)
 
-    notelist = csv_to_notelist(rows, resolution=RESOLUTION)
+    print("Processing notes with resolution of {}s".format(RESOLUTION))
+    notestring = csv_to_notelist(rows, resolution=RESOLUTION)
 
-    reducedFileName = midiInputFileName + "_reduced.csv"
+    reducedFileName = midiInputFileName + "_reduced.txt"
     print("Creating reduced file at ", reducedFileName)
-    with open(reducedFileName, 'w') as f:
-        writeCSV = csv.writer(f)
-        writeCSV.writerows(notelist)
+    with open(reducedFileName, 'w', encoding="utf-8") as f:
+        f.write(notestring)
 
     print("All done.")
 
