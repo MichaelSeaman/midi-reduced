@@ -5,7 +5,7 @@
 1, 0, SMPTE_offset, 96, 0, 3, 0, 0
 1, 0, Time_signature, 4, 2, 24, 8
 1, 0, Key_signature, 0, "major"
-1, 0, Tempo, 373902
+1, 0, Tempo, 500000
 1, {last_tick}, End_track
 2, 0, Start_track
 2, 0, Title_t, "Piano"

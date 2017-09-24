@@ -83,6 +83,14 @@ def main(argv):
         f.write(postamble)
 
     # next, run csv to midi
+    if(title[-8:] == "_reduced"):
+        out_title = title[:-8] + ".mid"
+    else:
+        out_title = title + ".mid"
+
+    print("Creating midicsv file at ", out_title)
+    os.system("csvmidi {} {}".format(temp_csv_file_name, out_title))
+    os.remove(temp_csv_file_name)
 
     print("All done.")
 
