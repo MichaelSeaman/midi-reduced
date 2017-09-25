@@ -93,7 +93,6 @@ def csv_to_note_event_list(rows, resolution):
 
 def preprocesses_raw_unicode_notes(raw):
     note_list_uni = raw.split(",")
-    print(note_list_uni)
     out = []
     for note in note_list_uni:
         row = [ord(cell) - 160 for cell in note ]
