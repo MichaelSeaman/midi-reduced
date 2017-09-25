@@ -29,7 +29,7 @@ This tool requires the ever helpful [midicsv](http://www.fourmilab.ch/webtools/m
 
 ## Authors
 
-* **Michael Seaman** - *Initial work* - [Michael Seaman](https://github.com/MichaelSeaman)
+* **Michael Seaman** - *Initial work* - [Michael Seaman](https://github.com/MichaelSeaman), [Machine Music](https://github.com/machine-music/)
 
 
 ## Acknowledgments
