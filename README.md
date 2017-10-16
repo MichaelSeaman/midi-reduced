@@ -7,10 +7,10 @@ character based RNN.
 
 Notes are seperated by commas, and each note takes the form
 ```
-<time since last note><note number><duration>,
+<time since last note on><note number><duration>,
 ```
-All time is measured in a resolution not specified in the file (Default 1
-  millisecond). All numeric values are stored with unicode characters, starting
+All time is measured in a resolution not specified in the file (Default 10
+  milliseconds). All numeric values are stored with unicode characters, starting
   at UTF-8 Dec# 160.
 
 ### Usage
@@ -22,6 +22,17 @@ Example:
 
 python3 midi_to_reduced.py -i moonlight_sonata.mid -r .001
 ```
+
+### File Guide
+* midi_to_reduced.py - contains the one-way translation from .mid files to the
+reduced text files. Contains one call to midicsv
+* reduced_to_midi.py - contains the other one-way translation. Contains one call
+to csvmidi
+* note_processing.py - contains methods for parsing notestrings/notelists from
+inputted csvs
+* midi.py - contains framework for handling midi events
+* midi_static_data.py - contains midi header and footer
+* misc.py - misc. 
 
 ### Dependencies
 
