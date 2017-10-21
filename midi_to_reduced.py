@@ -17,7 +17,8 @@ PAUSE_LENGTH = 3
 def main(argv):
     inputFiles, reduced_output_file, res, pause = parse_options(argv)
     notelist = []
-    for midiInputFile in inputFiles:
+    for i, midiInputFile in enumerate(inputFiles):
+        print("Starting on file {}: {}".format(i+1, midiInputFile))
         # run midi to csv
         baseInputFilename, _ = os.path.splitext(os.path.basename(midiInputFile))
         csvFileName = baseInputFilename + ".csv"
@@ -39,19 +40,24 @@ def main(argv):
             rows = list(readCSV)
         os.remove(csvFileName)
 
+        if not rows:
+            print("\nError with file. Continuing on.\n")
+            continue
         print("Processing notes with resolution of {}s".format(res))
         current_notelist = csv_to_notelist(rows, resolution=res)
-        print("Prepending silence")
+
+
+        print("Prepending silence of {} seconds".format(pause))
         current_notelist = prepend_silence_to_notelist(current_notelist,
             t=pause, res=res)
         notelist = notelist + current_notelist
 
-    print(notelist)
     notestring = notelist_to_notestring(notelist)
     with open(reduced_output_file, 'w', encoding="utf-8") as f:
         f.write(notestring)
 
     print("All done.")
+    print("Output at", reduced_output_file)
 
 def parse_options(argv):
     global MIDI_INPUT_FILE
@@ -91,10 +97,10 @@ def parse_options(argv):
         inputFiles = [MIDI_INPUT_FILE]
 
     if(len(inputFiles) < 1):
-        print("No files found.")
+        print("No '.mid' files found.")
         sys.exit(0)
     else:
-        print("Using file(s) ", inputFiles)
+        print("Found", len(inputFiles), "files.")
 
     if(not output_file_provided):
         baseInputFilename, _ = os.path.splitext(os.path.basename(MIDI_INPUT_FILE))

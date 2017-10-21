@@ -32,9 +32,13 @@ def csv_to_notelist(rows, resolution):
         elif rowType == "Tempo":
             tempo = int(cells[3])
             tempoMap.addTempo(tick, tempo)
-        elif rowType in ("Note_on_c","Note_off_c"):
+        elif rowType == "Note_on_c":
             pitch    = int(cells[4])
             velocity = int(cells[5])
+            noteEvents.append(NoteEvent(track, tick, pitch, velocity, i))
+        elif rowType == "Note_off_c":
+            pitch    = int(cells[4])
+            velocity = 0
             noteEvents.append(NoteEvent(track, tick, pitch, velocity, i))
 
     # Create notes by pairing noteOn and NoteOff events
