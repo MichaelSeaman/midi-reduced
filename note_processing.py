@@ -89,7 +89,7 @@ def notelist_to_MIDI_event_list(notelist, res):
         note_on = last_note_on + note_on_relative
         last_note_on = note_on
         pitch = int(cells[1])
-        duration = int(cells[2])
+        duration = int(cells[2]) * resolution_multiplier
 
         noteEvent_on = NoteEvent(track=2, tick=note_on, pitch=pitch, velocity=100)
         noteEvent_off = NoteEvent(track=2, tick=note_on+duration, pitch=pitch,
