@@ -89,7 +89,9 @@ def parse_options(argv):
         print("No input file provided. Defaulting to test case.")
 
     inputFiles = []
+    isDir = False
     if(os.path.isdir(MIDI_INPUT_FILE)):
+        isDir = True
         print("Directory inputted")
         for f in glob.glob(os.path.join(MIDI_INPUT_FILE, "*.mid")):
             inputFiles.append(f)
@@ -103,7 +105,19 @@ def parse_options(argv):
         print("Found", len(inputFiles), "files.")
 
     if(not output_file_provided):
-        baseInputFilename, _ = os.path.splitext(os.path.basename(MIDI_INPUT_FILE))
+        if(isDir):
+            dirname = os.path.dirname(MIDI_INPUT_FILE)
+            baseInputFilename = os.path.basename(dirname)
+        else:
+            basename = os.path.basename(MIDI_INPUT_FILE)
+            baseInputFilename, _ = os.path.splitext(basename)
+
+
+        basename = os.path.basename(MIDI_INPUT_FILE)
+        print(MIDI_INPUT_FILE)
+        print(os.path.split(MIDI_INPUT_FILE))
+        print(baseInputFilename)
+
         reduced_output_file = baseInputFilename + "_reduced.txt"
         print("Creating reduced file at ", reduced_output_file)
         Path(reduced_output_file).touch()

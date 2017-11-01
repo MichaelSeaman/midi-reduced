@@ -7,6 +7,8 @@
 import sys
 from midi import *
 
+DELIM = '\n'
+
 def csv_to_notelist(rows, resolution):
     '''
     Takes a nested list corresponding to split csv file and returns a 'notelist'
@@ -99,7 +101,7 @@ def notelist_to_MIDI_event_list(notelist, res):
 
     return sorted(event_list)
 
-def notelist_to_notestring(notelist):
+def notelist_to_notestring(notelist, delim=DELIM):
     '''
     Takes a notelist object [<displacement from last note>, <pitch>, <duration]
     and casts it (and returns it) as a unicode string
@@ -108,15 +110,15 @@ def notelist_to_notestring(notelist):
     for note in notelist:
         strlist.append("".join([
             chr( min(cell, 63583) + 160) for cell in note]))
-    notestring = ",".join(strlist)
+    notestring = delim.join(strlist)
     return notestring
 
-def notestring_to_notelist(notestring):
+def notestring_to_notelist(notestring, delim=DELIM):
     '''
     Takes a notelist object in unicode string form and casts it (and returns it)
     in integer list form: [<displacement from last note>, <pitch>, <duration]
     '''
-    note_list_uni = notestring.split(",")
+    note_list_uni = notestring.split(delim)
     notelist = []
     for note in note_list_uni:
         row = [ord(cell) - 160 for cell in note ]
