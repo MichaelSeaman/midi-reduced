@@ -104,28 +104,40 @@ def notelist_to_MIDI_event_list(notelist, res):
 def notelist_to_notestring(notelist, delim=DELIM):
     '''
     Takes a notelist object [<displacement from last note>, <pitch>, <duration]
-    and casts it (and returns it) as a unicode string
+    and casts it (and returns it) as a csv row string in the form
+    TIME_SINCE_LAST_NOTE_ON, DURATION, OCTAVE0, OCTAVE1, ... OCTAVE7, A, Bb, B, ... G, G#
     '''
     strlist = []
     for note in notelist:
-        strlist.append("".join([
-            chr( min(cell, 63583) + 160) for cell in note]))
+        octave, pitch = get_octave_pitch_from_midi_pitch(note[1])
+        displacement = note[0]
+        dur = note[2]
+        row = [0] * 22
+        row[0] = displacement
+        row[1] = dur
+        row[2+octave] = 1
+        row[10+pitch] = 1
+
+        strlist.append(",".join(str(cell) for cell in row))
     notestring = delim.join(strlist)
     return notestring
 
 def notestring_to_notelist(notestring, delim=DELIM):
     '''
-    Takes a notelist object in unicode string form and casts it (and returns it)
-    in integer list form: [<displacement from last note>, <pitch>, <duration]
+    Takes a csv row string in the form
+    TIME_SINCE_LAST_NOTE_ON, DURATION, OCTAVE0, OCTAVE1, ... OCTAVE7, A, Bb, B, ... G, G#
+    and returns it to integer list form: [<displacement from last note>, <pitch>, <duration>]
     '''
-    note_list_uni = notestring.split(delim)
+    note_csv = notestring.split(delim)
     notelist = []
-    for note in note_list_uni:
-        row = [ord(cell) - 160 for cell in note ]
-        if(len(row) != 3):
-            row = row + [0,0,0]
-            row = row[:3]
-        notelist.append(row)
+    for row in note_csv:
+        displacement = row[0]
+        dur = row[1]
+        octave = next(i for i,v in enumerate(row[2:10]) if v)
+        pitch = next(i for i,v in enumerate(row[10:]) if v)
+        midi_pitch = get_midi_pitch_from_octave_pitch(octave, pitch)
+        note = [displacement, midi_pitch, duration]
+        notelist.append(note)
     return notelist
 
 def prepend_silence_to_notestring(notestring, t, res):
@@ -143,3 +155,23 @@ def prepend_silence_to_notelist(notelist, t, res):
     ticks_to_add = int(t / res)
     notelist[0][0] += ticks_to_add
     return notelist
+
+def get_octave_pitch_from_midi_pitch(midi_pitch):
+    '''
+    Returns a tuple of integers (octave, pitch)
+    pitch starts at A=0
+    '''
+    octave = (midi_pitch - 21)// 12
+    octave = max(min(octave, 7), 0)
+    pitch = (midi_pitch - 21) % 12
+
+    return (octave, pitch)
+
+def get_midi_pitch_from_octave_pitch(octave, pitch):
+    '''
+    Takes the octave and pitch information and returns a midi note value
+    '''
+
+    midi_pitch = octave * 12 + 21
+    midi_pitch += pitch
+    return midi_pitch

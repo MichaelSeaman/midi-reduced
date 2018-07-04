@@ -1,17 +1,24 @@
 # midi-reduced
 2 way translation from midi to a reduced midi form
 
-### Reduced midi form
-For use as a condensed musical file form, made to be easily readable by a
-character based RNN.
+### Reduced midi form - UPDATE 7/3/18
+For use as a condensed musical file form - a more csv friendly specification
+to MIDI to be read by RNN models.
 
-Notes are seperated by commas, and each note takes the form
+One note takes the form:
 ```
-<time since last note on><note number><duration>,
+TIME_SINCE_LAST_NOTE_ON, DURATION, OCTAVE0, OCTAVE1, ... OCTAVE7, A, Bb, B, ... G, G#
 ```
-All time is measured in a resolution not specified in the file (Default 10
-  milliseconds). All numeric values are stored with unicode characters, starting
-  at UTF-8 Dec# 160.
+
+The first two fields are uints, representing time in units of 10 milliseconds.
+The next 8 fields represent a one-hot encoding of the octave of the next note.
+Numbering begins from the lowest key on the piano, which is sometimes called
+'A-1' and remains constant chromatically until the next note A. Note that this
+differs from traditional MIDI note naming. The following 12 columns represent
+one-hot encodings for musical pitch, starting from A to and ending w/ G#.
+
+![Note Ordering](images/notes.jpg)
+
 
 ### Usage
 To convert a midi file into reduced form:
@@ -42,6 +49,18 @@ inputted csvs
 ### Dependencies
 
 This tool requires the ever helpful [midicsv](http://www.fourmilab.ch/webtools/midicsv/) and is written in Python3
+
+### OLD Reduced form
+For use as a condensed musical file form, made to be easily readable by a
+character based RNN.
+
+Notes are seperated by commas, and each note takes the form
+```
+<time since last note on><note number><duration>,
+```
+All time is measured in a resolution not specified in the file (Default 10
+  milliseconds). All numeric values are stored with unicode characters, starting
+  at UTF-8 Dec# 160.
 
 ## Authors
 
